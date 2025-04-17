@@ -1,1 +1,67 @@
-<h1>Hello github</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BasisVR-GDriveHosting</title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+<div class="container">
+    <h1>
+        BasisVr auth redirect for Google Drive
+    </h1>
+    <p>Authorize yourself to upload your avatars, worlds, and props to your drive. </p>
+    <button onclick="oauthSignIn()">
+        Authorize
+    </button>
+    <!-- TODO Check url for succesful auth and pass along to unity editor -->
+    <!-- <p>After authorizing you will be redirected back to this page and the authorization will be passed along to the Unity editor</p> -->
+</div>
+
+<script>
+    // This script taken from https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#javascript-sample-code
+
+    /*
+    * Create form to request access token from Google's OAuth 2.0 server.
+    */
+    function oauthSignIn() {
+        // Google's OAuth 2.0 endpoint for requesting an access token
+        var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
+
+        // Create <form> element to submit parameters to OAuth 2.0 endpoint.
+        var form = document.createElement('form');
+        form.setAttribute('method', 'GET'); // Send as a GET request.
+        form.setAttribute('action', oauth2Endpoint);
+
+        // Parameters to pass to OAuth 2.0 endpoint.
+        var params = {
+            'client_id': '657852730438-frtd3vn1ciqrp6q96gh6pdt3li9tvdpl.apps.googleusercontent.com',
+            'redirect_uri': 'https://neon-glowstick.github.io/BasisVR-GDriveHosting',
+            'response_type': 'token',
+            'scope': 'https://www.googleapis.com/auth/drive.file',
+            'include_granted_scopes': 'false',
+            'state': 'pass-through value' // TODO CSRF token
+        };
+
+        // Add form parameters as hidden input values.
+        for (var p in params) {
+            var input = document.createElement('input');
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('name', p);
+            input.setAttribute('value', params[p]);
+            form.appendChild(input);
+        }
+
+        // Add form to page and submit it to open the OAuth 2.0 endpoint.
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+</body>
+
+<footer>
+    <p>
+        <a href="https://github.com/neon-glowstick/BasisVR-GDriveHosting">Source on Github</a>
+    </p>
+</footer>
+</html>
