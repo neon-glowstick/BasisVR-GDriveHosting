@@ -6,18 +6,38 @@
 </head>
 
 <body>
-<div class="container">
+<div id="content">
     <h1>
         BasisVr auth redirect for Google Drive
     </h1>
-    <p>Authorize yourself to upload your avatars, worlds, and props to your drive. </p>
+    <p>
+        Authorize yourself to upload your avatars, worlds, and props to your drive.
+    </p>
     <button onclick="oauthSignIn()">
         Authorize
     </button>
-    <!-- TODO Check url for succesful auth and pass along to unity editor -->
-    <!-- <p>After authorizing you will be redirected back to this page and the authorization will be passed along to the Unity editor</p> -->
+    <p>
+        Authorization will redirect to this page. On a success there will be a button to copy the token to your clipboard.
+    </p>
 </div>
-
+<script>
+    // Parse url for succesful auth
+    // Add button for copying it to clipboard
+    const parsedHash = new URLSearchParams(window.location.hash);
+    const accessToken = parsedHash.get("access_token");
+    if (accessToken != null)
+    {
+        let button = document.createElement('button');
+        button.textContent = "Copy token to clipboard";
+        button.onclick = copyToClipboard;
+        console.log(accessToken);
+        document.getElementById("content").appendChild(button);
+    }
+    function copyToClipboard()
+    {
+        navigator.clipboard.writeText(accessToken);
+    }
+</script>
 <script>
     // This script taken from https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#javascript-sample-code
 
