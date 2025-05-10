@@ -1,14 +1,22 @@
 {
     "name": "NeonGlowstick.BasisVr.GDriveHosting",
     "rootNamespace": "NeonGlowstick.BasisVr.GDriveHosting",
-    "references": [],
+    "references": [
+        "GUID:b4ae365a73764ee478adc74cb89832fe",
+        "GUID:dde09067b7f7a054ca208a3c17c8f7c5"
+    ],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
-    "precompiledReferences": [],
+    "precompiledReferences": [
+        "Google.Apis.Auth.dll",
+        "Google.Apis.Core.dll",
+        "Google.Apis.dll",
+        "Google.Apis.Drive.v3.dll"
+    ],
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
