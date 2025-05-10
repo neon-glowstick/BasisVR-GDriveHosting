@@ -1,0 +1,16 @@
+{
+    "name": "NeonGlowstick.BasisVr.GDriveHosting",
+    "rootNamespace": "NeonGlowstick.BasisVr.GDriveHosting",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

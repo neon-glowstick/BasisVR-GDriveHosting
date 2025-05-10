@@ -1,0 +1,8 @@
+{
+  "name": "neonglowstick.basisvr.gdrivehosting",
+  "version": "0.0.0",
+  "displayName": "BasisVr uploader for Google Drive",
+  "description": "Upload BasisVr assets to your Google Drive",
+  "repository":"https://github.com/neon-glowstick/BasisVr-GDriveHosting",
+  "dependencies": {}
+}
