@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 namespace NeonGlowstick.BasisVr.GDriveHosting
 {
     [InitializeOnLoad]
-    public static class AvatarUploaderGui
+    internal static class AvatarUploaderGui
     {
         private const string AuthUrl = "https://neon-glowstick.github.io/BasisVR-GDriveHosting";
 
