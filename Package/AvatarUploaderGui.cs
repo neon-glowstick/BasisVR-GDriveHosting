@@ -48,7 +48,7 @@ namespace NeonGlowstick.BasisVr.GDriveHosting
             {
                 uploadButton.SetEnabled(false);
                 var avatarName = inspector.Avatar.BasisBundleDescription.AssetBundleName;
-                // todo: Upload
+                AvatarUploader.Upload(token, avatarName);
                 uploadButton.SetEnabled(true);
             };
 
