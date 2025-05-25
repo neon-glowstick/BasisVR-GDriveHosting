@@ -6,11 +6,13 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using UnityEngine;
+using File = System.IO.File;
 
 namespace NeonGlowstick.BasisVr.GDriveHosting
 {
     internal static class AvatarUploader
     {
+        private const string DriveApplicationName = "BasisGoogleDriveUploader";
         public static async void Upload(string oauthToken, string avatarName)
         {
             if (string.IsNullOrEmpty(oauthToken))
@@ -28,22 +30,27 @@ namespace NeonGlowstick.BasisVr.GDriveHosting
                     return;
                 }
 
+                // todo display progress in editor and link cancellation
                 var cts = CancellationTokenSource.CreateLinkedTokenSource(Application.exitCancellationToken);
+                var cancellationToken = cts.Token;
                 await using var avatarFileStream = File.OpenRead(filePath);
 
                 using var driveService = new DriveService(new BaseClientService.Initializer
                 {
                     HttpClientInitializer = GoogleCredential.FromAccessToken(oauthToken),
-                    ApplicationName = "BasisGoogleDriveUploader"
+                    ApplicationName = DriveApplicationName
                 });
 
-                var fileMetaData = new Google.Apis.Drive.v3.Data.File
+                var directories = await driveService.GetOrCreateDirectories(cancellationToken);
+                var existingFile = await driveService.GetExistingAvatarFile(directories, avatarName, cancellationToken);
+                if (existingFile != null)
                 {
-                    Name = avatarName + ".BEE"
-                };
-
-                var createRequest = driveService.Files.Create(fileMetaData, avatarFileStream, "application/octet-stream");
-                await createRequest.UploadAsync(cts.Token);
+                    await driveService.ReplaceAvatar(avatarFileStream, existingFile, cancellationToken);
+                }
+                else
+                {
+                    await driveService.CreateAvatar(avatarFileStream, directories, avatarName, cancellationToken);
+                }
             }
             catch (Exception e)
             {
