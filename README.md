@@ -20,7 +20,7 @@ Step-by-step:
 1. Follow the [guide for creating an avatar](https://docs.basisvr.org/docs/avatars) to build your assetbundle.
 2. When the bundle is built scroll down in the inspector for the Basis Avatar component and click the "Open auth page" button to open the [authorization redirect landing page](https://neon-glowstick.github.io/BasisVR-GDriveHosting/).
 3. Click the `Authorize` button and it should redirect you to the Google consent page.
-   4. The consent page should only ask for the [File](https://developers.google.com/workspace/drive/api/guides/api-specific-auth#drive-scopes) scope. This limits the application to only interact with files it has created.
+   - The consent page should only ask for the [File](https://developers.google.com/workspace/drive/api/guides/api-specific-auth#drive-scopes) scope. This limits the application to only interact with files it has created.
 5. When you are done with the consent page you will be redirected back to the [authorization redirect landing page](https://neon-glowstick.github.io/BasisVR-GDriveHosting/). A new button should have appeared. Click it to copy the OAuth token from your address bar to your clipboard.
 6. Go back to the Unity editor and paste the token into the OAuth token password field.
 7. Click the upload button. Your .BEE file will be uploaded to `BasisVr/Avatars/<YourAvatarName>.BEE`.
