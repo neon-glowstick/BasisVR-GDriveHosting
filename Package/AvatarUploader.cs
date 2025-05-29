@@ -43,14 +43,13 @@ namespace NeonGlowstick.BasisVr.GDriveHosting
 
                 var directories = await driveService.GetOrCreateDirectories(cancellationToken);
                 var existingFile = await driveService.GetExistingAvatarFile(directories, avatarName, cancellationToken);
-                if (existingFile != null)
-                {
-                    await driveService.ReplaceAvatar(avatarFileStream, existingFile, cancellationToken);
-                }
-                else
-                {
-                    await driveService.CreateAvatar(avatarFileStream, directories, avatarName, cancellationToken);
-                }
+                var uploadRequest = existingFile == null ? driveService.CreateAvatarRequest(avatarFileStream, directories, avatarName) : driveService.ReplaceAvatarRequest(avatarFileStream, existingFile);
+                var response = await uploadRequest.UploadAsync(cancellationToken);
+                if (response.Exception != null)
+                    throw response.Exception;
+
+                var id = uploadRequest.ResponseBody.Id;
+                Helpers.ShowSuccessDialog(avatarName, id);
             }
             catch (Exception e)
             {

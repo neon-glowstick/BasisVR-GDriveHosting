@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
+using Google.Apis.Upload;
 using UnityEditor;
 using UnityEngine;
 using File = Google.Apis.Drive.v3.Data.File;
@@ -84,20 +85,14 @@ namespace NeonGlowstick.BasisVr.GDriveHosting
             return null;
         }
 
-        public static async Task ReplaceAvatar(this DriveService driveService, FileStream avatarFileStream, File fileMetaData, CancellationToken cancellationToken)
+        public static ResumableUpload<File, File> ReplaceAvatarRequest(this DriveService driveService, FileStream avatarFileStream, File fileMetaData)
         {
             // We're not modifying any of the metadata so keep the File blank
             var fieldsToModify = new File();
-            var updateRequest = driveService.Files.Update(fieldsToModify, fileMetaData.Id, avatarFileStream, "application/octet-stream");
-            var updateResponse = await updateRequest.UploadAsync(cancellationToken);
-            if (updateResponse.Exception != null)
-                throw updateResponse.Exception;
-
-            var id = updateRequest.ResponseBody.Id;
-            ShowSuccessDialog(fileMetaData.Name, id);
+            return driveService.Files.Update(fieldsToModify, fileMetaData.Id, avatarFileStream, "application/octet-stream");
         }
 
-        public static async Task CreateAvatar(this DriveService driveService, FileStream avatarFileStream, DirectoryIds directories, string avatarName, CancellationToken cancellationToken)
+        public static ResumableUpload<File, File> CreateAvatarRequest(this DriveService driveService, FileStream avatarFileStream, DirectoryIds directories, string avatarName)
         {
             var fileMetaData = new File
             {
@@ -106,12 +101,7 @@ namespace NeonGlowstick.BasisVr.GDriveHosting
             };
             var createRequest = driveService.Files.Create(fileMetaData, avatarFileStream, "application/octet-stream");
             createRequest.Fields = "id";
-            var response = await createRequest.UploadAsync(cancellationToken);
-            if (response.Exception != null)
-                throw response.Exception;
-
-            var id = createRequest.ResponseBody.Id;
-            ShowSuccessDialog(fileMetaData.Name, id);
+            return createRequest;
         }
 
         private static async Task<DirectoryIds> GetExistingDirectoryIds(this DriveService service, CancellationToken cancellationToken)
@@ -202,7 +192,7 @@ namespace NeonGlowstick.BasisVr.GDriveHosting
         #endregion
 
         #region EditorUtility
-        private static void ShowSuccessDialog(string avatarName, string id)
+        internal static void ShowSuccessDialog(string avatarName, string id)
         {
             var downloadUrl = "https://drive.google.com/uc?export=download&id=" + id;
             var copyToClipboard = EditorUtility.DisplayDialog("Upload complete", $"{avatarName} was uploaded to your google drive. Use this link to load the avatar: {downloadUrl}", "Copy link to clipboard", "Close");
