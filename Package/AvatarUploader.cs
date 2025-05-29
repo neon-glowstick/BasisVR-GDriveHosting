@@ -5,6 +5,7 @@ using System.Threading;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
+using UnityEditor;
 using UnityEngine;
 using File = System.IO.File;
 
@@ -21,6 +22,7 @@ namespace NeonGlowstick.BasisVr.GDriveHosting
                 return;
             }
 
+            var uploadedFileId = string.Empty;
             try
             {
                 var assetBundleDirectory = Path.Combine(Environment.CurrentDirectory, "AssetBundles");
@@ -30,7 +32,6 @@ namespace NeonGlowstick.BasisVr.GDriveHosting
                     return;
                 }
 
-                // todo display progress in editor and link cancellation
                 var cts = CancellationTokenSource.CreateLinkedTokenSource(Application.exitCancellationToken);
                 var cancellationToken = cts.Token;
                 await using var avatarFileStream = File.OpenRead(filePath);
@@ -41,20 +42,39 @@ namespace NeonGlowstick.BasisVr.GDriveHosting
                     ApplicationName = DriveApplicationName
                 });
 
+                var cancelled = EditorUtility.DisplayCancelableProgressBar("Upload", "Setting up drive directories", 0.3f);
                 var directories = await driveService.GetOrCreateDirectories(cancellationToken);
+                if(cancelled)
+                    return;
+
+                cancelled = EditorUtility.DisplayCancelableProgressBar("Upload", "Checking for avatar file on Drive", 0.5f);
                 var existingFile = await driveService.GetExistingAvatarFile(directories, avatarName, cancellationToken);
-                var uploadRequest = existingFile == null ? driveService.CreateAvatarRequest(avatarFileStream, directories, avatarName) : driveService.ReplaceAvatarRequest(avatarFileStream, existingFile);
+                if(cancelled)
+                    return;
+
+                var uploadRequest = existingFile == null
+                    ? driveService.CreateAvatarRequest(avatarFileStream, directories, avatarName)
+                    : driveService.ReplaceAvatarRequest(avatarFileStream, existingFile);
+
+                using var _ = new CancellableProgressBarForUpload(uploadRequest, cts);
                 var response = await uploadRequest.UploadAsync(cancellationToken);
                 if (response.Exception != null)
                     throw response.Exception;
 
-                var id = uploadRequest.ResponseBody.Id;
-                Helpers.ShowSuccessDialog(avatarName, id);
+                uploadedFileId = uploadRequest.ResponseBody.Id;
             }
             catch (Exception e)
             {
                 Debug.LogError($"Upload failed: {e.Message}");
             }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+            }
+            if (string.IsNullOrEmpty(uploadedFileId))
+                return;
+
+            Helpers.ShowSuccessDialog(avatarName, uploadedFileId);
         }
 
         private static bool TryGetAvatarFile(string directory, out string filePath)
