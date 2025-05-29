@@ -110,31 +110,31 @@ namespace NeonGlowstick.BasisVr.GDriveHosting
             // Directories in drive are just files with a special mimetype
             const string filter = "mimeType = 'application/vnd.google-apps.folder'";
 
-            // todo: This is too naive, use the Q filter to actually look for the directories
             var found = 0;
             await foreach (var file in EnumerateFiles(service, filter, cancellationToken))
             {
+                // Skip Scenes and Props for now, dont have gui for uploading those yet
                 switch (file.Name)
                 {
                     case BasisVrDirectory:
                         directories.BasisVr = file.Id;
                         found++;
                         break;
-                    case ScenesDirectory:
-                        directories.Scenes = file.Id;
-                        found++;
-                        break;
+                    // case ScenesDirectory:
+                    //     directories.Scenes = file.Id;
+                    //     found++;
+                    //     break;
                     case AvatarsDirectory:
                         directories.Avatars = file.Id;
                         found++;
                         break;
-                    case PropsDirectory:
-                        directories.Props = file.Id;
-                        found++;
-                        break;
+                    // case PropsDirectory:
+                    //     directories.Props = file.Id;
+                    //     found++;
+                    //     break;
                 }
 
-                if (found >= 4)
+                if (found >= 2)
                     break;
             }
 
