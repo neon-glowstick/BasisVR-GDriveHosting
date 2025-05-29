@@ -57,7 +57,11 @@ namespace NeonGlowstick.BasisVr.GDriveHosting
             {
                 text = "Delete stored token"
             };
-            deleteConfigButton.clicked += GoogleDriveConfig.Delete;
+            deleteConfigButton.clicked += () =>
+            {
+                accessTokenField.value = string.Empty;
+                GoogleDriveConfig.Delete();
+            };
             container.Add(deleteConfigButton);
 
             return container;
