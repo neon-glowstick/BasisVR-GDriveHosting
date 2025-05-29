@@ -26,6 +26,8 @@ Step-by-step:
 7. Click the upload button. Your .BEE file will be uploaded to `BasisVr/Avatars/<YourAvatarName>.BEE`.
 8. When upload is complete the URL for the .BEE file is printed to the dialogue and console. And there will be a button to copy the URL to your clipboard.
 
+The OAuth token is stored locally in a config file when you click Upload and loaded automatically so you don't have to go through all these steps every time. But the token is only valid for an hour.
+
 A BasisVr folder is created in your drive, and an Avatars folder inside of the BasisVr folder. The Avatars folder is made public and any file inside of it can be downloaded by anyone with the link to it.
 
 > [!CAUTION]
