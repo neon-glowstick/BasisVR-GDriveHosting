@@ -34,10 +34,9 @@ namespace NeonGlowstick.BasisVr.GDriveHosting
                 text = "Open auth page"
             });
 
-            // Todo: store and retrieve token in a file between editor reloads
-            var token = string.Empty;
-            var accessTokenField = PasswordField("OAuth token", token);
-            accessTokenField.RegisterValueChangedCallback(value => token = value.newValue);
+            var config = GoogleDriveConfig.Load();
+            var accessTokenField = PasswordField("OAuth token", config.OAuthToken);
+            accessTokenField.RegisterValueChangedCallback(value => config.OAuthToken = value.newValue);
             container.Add(accessTokenField);
 
             var uploadButton = new Button
@@ -47,12 +46,20 @@ namespace NeonGlowstick.BasisVr.GDriveHosting
             uploadButton.clicked += () =>
             {
                 uploadButton.SetEnabled(false);
+                GoogleDriveConfig.Save(config);
                 var avatarName = inspector.Avatar.BasisBundleDescription.AssetBundleName;
-                AvatarUploader.Upload(token, avatarName);
+                AvatarUploader.Upload(config.OAuthToken, avatarName);
                 uploadButton.SetEnabled(true);
             };
-
             container.Add(uploadButton);
+
+            var deleteConfigButton = new Button
+            {
+                text = "Delete stored token"
+            };
+            deleteConfigButton.clicked += GoogleDriveConfig.Delete;
+            container.Add(deleteConfigButton);
+
             return container;
         }
 
